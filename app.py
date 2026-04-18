@@ -4,8 +4,10 @@ import hashlib, datetime, json, os
 app = Flask(__name__)
 app.secret_key = "secret123"
 
-DATA_FILE = "data.json"
-USER_FILE = "users.json"
+# -------- FILE PATH FIX (IMPORTANT FOR RENDER) -------- #
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_FILE = os.path.join(BASE_DIR, "data.json")
+USER_FILE = os.path.join(BASE_DIR, "users.json")
 
 # -------- USER FUNCTIONS -------- #
 def load_users():
@@ -63,7 +65,6 @@ class Blockchain:
                     block.hash = b['hash']
                     self.chain.append(block)
 
-    # 🔐 VALIDATION
     def is_chain_valid(self):
         for i in range(1, len(self.chain)):
             current = self.chain[i]
@@ -79,12 +80,12 @@ class Blockchain:
 
 blockchain = Blockchain()
 
-# -------- LOGIN -------- #
+# -------- HOME / LOGIN -------- #
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
-        user = request.form['username'].strip()
-        pwd = request.form['password'].strip()
+    if request.method == 'POST':
+        user = request.form.get('username')
+        pwd = request.form.get('password')
 
         users = load_users()
 
@@ -100,13 +101,13 @@ def login():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        user = request.form['username'].strip()
-        pwd = request.form['password'].strip()
+        user = request.form.get('username')
+        pwd = request.form.get('password')
 
         users = load_users()
 
         if user in users:
-            return render_template('signup.html', msg="User exists")
+            return render_template('signup.html', msg="User already exists")
 
         users[user] = pwd
         save_users(users)
@@ -127,16 +128,16 @@ def dashboard():
                            records=max(0, len(blockchain.chain)-1),
                            valid=blockchain.is_chain_valid())
 
-# -------- ADD -------- #
+# -------- ADD RECORD -------- #
 @app.route('/add', methods=['POST'])
 def add():
     if 'user' not in session:
         return redirect('/')
 
     data = {
-        "PatientID": request.form['pid'],
-        "Diagnosis": request.form['diagnosis'],
-        "Treatment": request.form['treatment']
+        "PatientID": request.form.get('pid'),
+        "Diagnosis": request.form.get('diagnosis'),
+        "Treatment": request.form.get('treatment')
     }
 
     blockchain.add_block(data)
@@ -159,7 +160,7 @@ def search():
     result = []
 
     if request.method == 'POST':
-        pid = request.form['pid']
+        pid = request.form.get('pid')
 
         for block in blockchain.chain:
             if isinstance(block.data, dict) and block.data.get("PatientID") == pid:
@@ -189,9 +190,9 @@ def edit(index):
 
     if request.method == 'POST':
         block.data = {
-            "PatientID": request.form['pid'],
-            "Diagnosis": request.form['diagnosis'],
-            "Treatment": request.form['treatment']
+            "PatientID": request.form.get('pid'),
+            "Diagnosis": request.form.get('diagnosis'),
+            "Treatment": request.form.get('treatment')
         }
 
         block.hash = block.calculate_hash()
@@ -207,7 +208,11 @@ def logout():
     session.clear()
     return redirect('/')
 
+# -------- HEALTH CHECK (FOR RENDER) -------- #
+@app.route('/ping')
+def ping():
+    return "alive"
+
 # -------- RUN -------- #
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port)
+    app.run()
