@@ -82,7 +82,7 @@ blockchain = Blockchain()
 # -------- LOGIN -------- #
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
+    return render_template('login.html')
         user = request.form['username'].strip()
         pwd = request.form['password'].strip()
 
