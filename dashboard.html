@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark">
+<div class="container-fluid">
+<span class="navbar-brand">🏥 Healthcare System</span>
+<div>
+<a href="/view" class="btn btn-light btn-sm">Records</a>
+<a href="/search" class="btn btn-light btn-sm">Search</a>
+<a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+</div>
+</div>
+</nav>
+
+<div class="container mt-4">
+
+<h3>Welcome, {{user}} 👋</h3>
+
+<!-- 🔐 Blockchain Validation -->
+{% if valid %}
+<div class="alert alert-success">Blockchain is Valid ✅</div>
+{% else %}
+<div class="alert alert-danger">Blockchain Tampered ❌</div>
+{% endif %}
+
+<div class="row mt-4">
+<div class="col-md-6">
+<div class="card bg-primary text-white p-3">
+<h5>Total Blocks</h5>
+<h2>{{blocks}}</h2>
+</div>
+</div>
+
+<div class="col-md-6">
+<div class="card bg-success text-white p-3">
+<h5>Total Records</h5>
+<h2>{{records}}</h2>
+</div>
+</div>
+</div>
+
+<hr>
+
+<h4>Add Patient Record</h4>
+
+<form action="/add" method="post">
+<input class="form-control mb-2" name="pid" placeholder="Patient ID" required>
+<input class="form-control mb-2" name="diagnosis" placeholder="Diagnosis" required>
+<input class="form-control mb-2" name="treatment" placeholder="Treatment" required>
+<button class="btn btn-success">Add Record</button>
+</form>
+
+</div>
+</body>
+</html>

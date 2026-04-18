@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Edit Record</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark">
+<div class="container-fluid">
+<span class="navbar-brand">🏥 Healthcare System</span>
+<div>
+<a href="/view" class="btn btn-light btn-sm">Records</a>
+<a href="/dashboard" class="btn btn-light btn-sm">Dashboard</a>
+<a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+</div>
+</div>
+</nav>
+
+<div class="container mt-4">
+
+<h3>✏️ Edit Record</h3>
+
+<form method="post">
+<input class="form-control mb-2" name="pid" value="{{block.data.PatientID}}" required>
+<input class="form-control mb-2" name="diagnosis" value="{{block.data.Diagnosis}}" required>
+<input class="form-control mb-2" name="treatment" value="{{block.data.Treatment}}" required>
+<button class="btn btn-success">Update</button>
+</form>
+
+<br>
+<a href="/view" class="btn btn-secondary">Back</a>
+
+</div>
+</body>
+</html>
